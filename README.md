@@ -58,3 +58,19 @@ Passwort hashen mit
 ```
 INSERT INTO users (username, password) VALUES ('jorgo', 'Ausgabe von vorher');
 ```
+Dann den Server starten
+```
+./src/app.js
+```
+Dann einen User registrieren: 
+```
+POST http://localhost:5000/api/auth/register
+``` 
+Mit dem Body (raw JSON)
+```
+{"username": "jorgo", "password": "your_password"}
+```
+Dann einloggen (mit dem selben Body)
+```
+POST http://localhost:5000/api/auth/login
+```
