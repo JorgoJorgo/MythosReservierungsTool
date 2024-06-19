@@ -65,12 +65,19 @@ router.post('/login',
     const { username, password } = req.body;
     try {
       // Benutzer in der Datenbank suchen
+      console.log('Anfrage an die Datenbank:', username);
+      
+
+        
       const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+      console.log('Datenbankantwort:', user.rows);
       if (user.rows.length === 0) {
         return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
       }
 
       // Passwort überprüfen
+      console.log('Eingegebenes Passwort:', password);
+      console.log('Gehashtes Passwort in der Datenbank:', user.rows[0].password);
       const isMatch = await bcrypt.compare(password, user.rows[0].password);
       if (!isMatch) {
         return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
@@ -91,6 +98,7 @@ router.post('/login',
       res.status(500).send('Server Error');
     }
   }
+  
 );
 
 module.exports = router;
