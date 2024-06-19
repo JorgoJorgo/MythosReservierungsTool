@@ -44,3 +44,12 @@ mit (raw) Body:
   "phoneNumber": "0123456789"
 }
 ```
+### User anlegen:
+Passwort hashen mit 
+```
+./src/hashPassword.js
+```
+
+```
+INSERT INTO users (username, password) VALUES ('jorgo', 'Ausgabe von vorher');
+```
