@@ -20,7 +20,13 @@ CREATE TABLE reservations (
   phone_number VARCHAR(15)
 );
 ```
-
+```
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL
+);
+``
 ### Datenbank testen:
 (https://web.postman.co/workspace/My-Workspace~a5d918e1-f044-4551-8821-4d7402ac829c/request/create?requestId=e00038a4-ef15-4004-b3c6-a2f6a746c26e)
 
