@@ -8,4 +8,15 @@ const pool = new Pool({
   port: 5432,
 });
 
-module.exports = pool;
+//einloggen am laptop
+const poolLaptop = new Pool({
+  user: 'myuser',          // Dein Benutzername
+  host: 'localhost',
+  database: 'reservations_db',
+  password: 'mypassword',  // Dein Passwort
+  port: 5432,
+});
+
+//hier muss das jeweilige auskommentiert werden
+// module.exports = pool;
+module.exports = poolLaptop;

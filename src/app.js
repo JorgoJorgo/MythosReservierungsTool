@@ -1,15 +1,18 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const routes = require('./routes');
-
 const app = express();
-const port = process.env.PORT || 3000;
+const pool = require('./db');
 
-app.use(bodyParser.json());
-app.use(cors());
-app.use('/api', routes);
+// Middleware für das Parsen von JSON-Daten
+app.use(express.json());
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Routen für Authentifizierung und Reservierungen
+const authRouter = require('./controllers/authController');
+const reservationRouter = require('./controllers/reservationController');
+app.use('/api/auth', authRouter);
+app.use('/api/reservations', reservationRouter);
+
+// Starten des Servers auf Port 5000
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
