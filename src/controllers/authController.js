@@ -49,40 +49,24 @@ router.post('/register',
 );
 
 // Route zum Benutzerlogin
-router.post('/login',
-  [
-    // Eingabevalidierung
-    check('username').not().isEmpty().withMessage('Username is required'),
-    check('password').not().isEmpty().withMessage('Password is required')
-  ],
-  async (req, res) => {
-    // Fehler in der Eingabe validieren
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
+router.post('/login', async (req, res) => {
+    // Extrahiere Benutzername und Passwort aus der Anfrage
     const { username, password } = req.body;
+  
     try {
+      console.log("[POST /login] Versuche User einzuloggen")
       // Benutzer in der Datenbank suchen
-      console.log('Anfrage an die Datenbank:', username);
-      
-
-        
       const user = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-      console.log('Datenbankantwort:', user.rows);
       if (user.rows.length === 0) {
         return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
       }
-
+  
       // Passwort überprüfen
-      console.log('Eingegebenes Passwort:', password);
-      console.log('Gehashtes Passwort in der Datenbank:', user.rows[0].password);
       const isMatch = await bcrypt.compare(password, user.rows[0].password);
       if (!isMatch) {
         return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
       }
-
+  
       // JWT erstellen
       const payload = {
         user: {
@@ -90,15 +74,15 @@ router.post('/login',
         }
       };
       const token = jwt.sign(payload, 'your_jwt_secret', { expiresIn: '1h' });
-
+  
       // Token zurückgeben
+      console.log("[POST /login] Versuche User Success Login")
       res.json({ token });
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
     }
-  }
+  });
   
-);
 
 module.exports = router;
