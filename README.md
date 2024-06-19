@@ -19,8 +19,7 @@ CREATE TABLE reservations (
   table_number INTEGER,
   phone_number VARCHAR(15)
 );
-```
-```
+
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
