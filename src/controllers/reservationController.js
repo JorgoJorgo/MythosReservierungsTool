@@ -11,13 +11,13 @@ router.post('/', auth, async (req, res) => {
 
   // Extrahiere Reservierungsdaten aus der Anfrage
   console.log('[POST /api/reservations] Request body:', req.body);
-  const { date, time, customerName, numGuests, tableName, phoneNumber } = req.body;
+  const { date, time, customer_name, guest_count, employee_name, table_number, phone_number,  } = req.body;
 
   try {
     // Füge die Reservierungsdaten in die Datenbank ein
     const newReservation = await pool.query(
-      'INSERT INTO reservations (user_id, date, time, customer_name, num_guests, table_name, phone_number) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [req.user.userId, date, time, customerName, numGuests, tableName, phoneNumber]
+      'INSERT INTO reservations (date, time, customer_name, guest_count, employee_name, table_number, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [date, time, customer_name, guest_count, employee_name, table_number, phone_number,  req.user.userId]
     );
     console.log('[POST /api/reservations] New reservation:', newReservation.rows[0]);
 
