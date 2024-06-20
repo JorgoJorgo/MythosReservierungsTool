@@ -2,7 +2,12 @@
 
 ## Server starten: 
 ```
-node src/app.js
+cd .../backend npm start
+```
+
+## Frontend starten:
+```
+cd .../reservations-frontend npm start
 ```
 
 ## Datenbank:
