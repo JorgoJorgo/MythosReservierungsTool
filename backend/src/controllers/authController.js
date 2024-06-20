@@ -76,10 +76,11 @@ router.post('/login', async (req, res) => {
       const token = jwt.sign(payload, 'your_jwt_secret', { expiresIn: '1h' });
   
       // Token zurückgeben
-      console.log("[POST /login] Versuche User Success Login")
+      console.log("[POST /login] User Success Login")
       res.json({ token });
     } catch (err) {
       console.error(err.message);
+      console.log("[POST /login] User Failed Login")
       res.status(500).send('Server Error');
     }
   });
