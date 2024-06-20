@@ -1,6 +1,11 @@
 const express = require('express');
 const app = express();
 const pool = require('./db');
+const cors = require('cors');
+
+// Erlaube Anfragen von allen Ursprüngen
+app.use(cors());
+
 
 // Middleware für das Parsen von JSON-Daten
 app.use(express.json());
