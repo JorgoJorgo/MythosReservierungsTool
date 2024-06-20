@@ -17,7 +17,8 @@ CREATE TABLE reservations (
   guest_count INTEGER NOT NULL,
   employee_name VARCHAR(100) NOT NULL,
   table_number INTEGER,
-  phone_number VARCHAR(15)
+  phone_number VARCHAR(15),
+  user_id INTEGER
 );
 
 CREATE TABLE users (
@@ -40,13 +41,13 @@ POST http://localhost:3000/api/reservations
 mit (raw) Body:
 ```
 {
-  "date": "2024-07-01",
-  "time": "19:00",
-  "customerName": "Max Mustermann",
-  "guestCount": 4,
-  "employeeName": "John Doe",
-  "tableNumber": 12,
-  "phoneNumber": "0123456789"
+         "date": "2024-06-30T22:00:00.000Z",
+        "time": "19:00:00",
+        "customer_name": "Max Mustermann",
+        "guest_count": 4,
+        "employee_name": "John Doe",
+        "table_number": 12,
+        "phone_number": "0123456789"
 }
 ```
 ### User anlegen:
