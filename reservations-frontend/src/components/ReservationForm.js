@@ -3,23 +3,26 @@ import './ReservationForm.css';
 
 function ReservationForm() {
   const [reservationData, setReservationData] = useState({
-    date: '',
-    time: '',
-    customer_name: '',
-    guest_count: '',
-    employee_name: '',
-    table_number: '',
-    phone_number: ''
+    date: '2024-06-25',
+    time: '18:00',
+    customer_name: 'Max Mustermann',
+    guest_count: '4',
+    employee_name: 'Anna Schmidt',
+    table_number: '3',
+    phone_number: '123456789'
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Token aus dem lokalen Speicher abrufen
+      const token = localStorage.getItem('token');
+
       const response = await fetch('http://localhost:5000/api/reservations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxfSwiaWF0IjoxNzE4ODgyNTUyLCJleHAiOjE3MTg4ODYxNTJ9.w82G8EDEo6Ty2sySU_O-8n8Y-jllukHhSRArjISlO0U'
+          'x-auth-token': token // Token aus dem lokalen Speicher einfügen
         },
         body: JSON.stringify(reservationData)
       });

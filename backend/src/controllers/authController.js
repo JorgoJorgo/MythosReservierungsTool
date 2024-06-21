@@ -10,7 +10,7 @@ router.post('/register',
   [
     // Eingabevalidierung
     check('username').not().isEmpty().withMessage('Username is required'),
-    check('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+    check('password').isLength({ min: 4 }).withMessage('Password must be at least 6 characters')
   ],
   async (req, res) => {
     // Fehler in der Eingabe validieren
@@ -37,7 +37,7 @@ router.post('/register',
           id: newUser.rows[0].id
         }
       };
-      const token = jwt.sign(payload, 'your_jwt_secret', { expiresIn: '1h' });
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
       // Token zurückgeben
       res.json({ token });
@@ -73,7 +73,7 @@ router.post('/login', async (req, res) => {
           id: user.rows[0].id
         }
       };
-      const token = jwt.sign(payload, 'your_jwt_secret', { expiresIn: '1h' });
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
   
       // Token zurückgeben
       console.log("[POST /login] User Success Login")

@@ -11,10 +11,11 @@ module.exports = function(req, res, next) {
 
   try {
     // Token verifizieren
-    const decoded = jwt.verify(token, 'your_jwt_secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded.user;
     next();
   } catch (err) {
+    console.log("[auth.js] token invalid, token:", token);
     res.status(401).json({ msg: 'Token is not valid' });
   }
 };

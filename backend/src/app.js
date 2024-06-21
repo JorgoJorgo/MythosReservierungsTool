@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const pool = require('./db');
 const cors = require('cors');
+require('dotenv').config();
 
 // Erlaube Anfragen von allen Ursprüngen
 app.use(cors());

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
-    username: '',
-    password: ''
+    username: 'jorgo',
+    password: 'your_password'
   });
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(" ");
+  const [errorMessage, setErrorMessage] = useState("");
   const { username, password } = formData;
 
   const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,25 +23,24 @@ const Login = () => {
       });
       const data = await response.json();
       if (!response.ok) {
-        console.log("BIN AUF FEHLER GESTOßEN1")
-        setError(true)
-        setErrorMessage(data.msg); // Fehlermeldung setzen, falls vorhanden
+        setError(true);
+        setErrorMessage(data.errors[0].msg);
       } else {
-        setError(false)
-        setErrorMessage(''); // Fehlermeldung löschen, falls keine vorhanden
-        console.log(data); // Hier können Sie die Serverantwort verarbeiten
+        setError(false);
+        setErrorMessage('');
+        // Token im lokalen Speicher speichern
+        localStorage.setItem('token', data.token);
+        onLoginSuccess();
       }
     } catch (error) {
       console.error('Error:', error);
-      console.log("BIN AUF FEHLER GESTOßEN3")
     }
   };
 
   return (
     <div>
       <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{"Fehler beim Login, bitte überprüfe deinen Benutzernamen & Passwort"}</p>} {/* Fehlermeldung wird hier gerendert */}
-      {error && console.log("Fehler beim Login")}
+      {error && <p style={{ color: 'red' }}>{errorMessage}</p>}
       <form onSubmit={onSubmit}>
         <div>
           <input

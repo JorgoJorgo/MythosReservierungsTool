@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReservationForm from './components/ReservationForm';
-import Login from './components/Login'; // Hier importieren Sie die Login-Komponente
+import Login from './components/Login';
 import './App.css';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Mythos Reservierungstool</h1>
       </header>
       <main>
-        <Login /> {/* Hier rendern Sie die Login-Komponente */}
-        {/* <ReservationForm /> */}
+        {isLoggedIn ? <ReservationForm /> : <Login onLoginSuccess={handleLoginSuccess} />}
       </main>
     </div>
   );

@@ -21,6 +21,7 @@ router.post(
     // Überprüfen, ob Validierungsfehler vorliegen
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log("[POST /api/reservations] Fehler 1")
       return res.status(400).json({ errors: errors.array() });
     }
 
