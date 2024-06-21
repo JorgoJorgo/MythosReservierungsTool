@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+
+.calendar-container {
+  margin: 20px auto;
+  width: 320px;
+}
+
+.reservations-list {
+  margin: 20px auto;
+  width: 80%;
+  text-align: left;
+}
+
+.reservation-form {
+  margin: 20px auto;
+  width: 80%;
+  text-align: left;
+}
+

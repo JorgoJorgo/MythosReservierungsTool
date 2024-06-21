@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
 import './ReservationForm.css';
 
-function ReservationForm() {
+function ReservationForm({ selectedDate }) {
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const formattedDate = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+    return formattedDate;
+  };
+
   const [reservationData, setReservationData] = useState({
-    date: '2024-06-25',
-    time: '18:00',
-    customer_name: 'Max Mustermann',
-    guest_count: '4',
-    employee_name: 'Anna Schmidt',
-    table_number: '3',
-    phone_number: '123456789'
+    date: formatDate(selectedDate), // Datum im Format 'DD/MM/YYYY'
+    time: '12:00', // Beispielzeit
+    customer_name: 'Max Mustermann', // Beispielname
+    guest_count: '4', // Beispielanzahl Gäste
+    employee_name: 'Anna Mitarbeiter', // Beispielname des Mitarbeiters
+    table_number: '5', // Beispiel Tischnummer
+    phone_number: '123456789' // Beispiel Telefonnummer
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Token aus dem lokalen Speicher abrufen
       const token = localStorage.getItem('token');
-
       const response = await fetch('http://localhost:5000/api/reservations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token // Token aus dem lokalen Speicher einfügen
+          'x-auth-token': token
         },
         body: JSON.stringify(reservationData)
       });
@@ -39,16 +43,8 @@ function ReservationForm() {
 
   return (
     <div className="reservation-form">
-      <h2>Reservierung erstellen</h2>
+      <h2>Reservierung erstellen für {formatDate(selectedDate)}</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="date">Datum:</label>
-        <input
-          type="date"
-          id="date"
-          name="date"
-          value={reservationData.date}
-          onChange={handleChange}
-        />
         <label htmlFor="time">Uhrzeit:</label>
         <input
           type="time"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Login = ({ onLoginSuccess }) => {
+const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     username: 'jorgo',
     password: 'your_password'
@@ -30,7 +30,7 @@ const Login = ({ onLoginSuccess }) => {
         setErrorMessage('');
         // Token im lokalen Speicher speichern
         localStorage.setItem('token', data.token);
-        onLoginSuccess();
+        onLogin(data); // Aufruf der onLogin Prop mit den Benutzerdaten
       }
     } catch (error) {
       console.error('Error:', error);

@@ -21,7 +21,6 @@ router.post(
     // Überprüfen, ob Validierungsfehler vorliegen
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log("[POST /api/reservations] Fehler 1")
       return res.status(400).json({ errors: errors.array() });
     }
 
@@ -32,11 +31,14 @@ router.post(
     console.log('[POST /api/reservations] Request body:', req.body);
     const { date, time, customer_name, guest_count, employee_name, table_number, phone_number } = req.body;
 
+    // Formatieren des Datums von DD/MM/YYYY zu YYYY-MM-DD für PostgreSQL
+    const formattedDate = formatDateForPostgres(date); // Funktion zum Umwandeln des Datums
+
     try {
       // Füge die Reservierungsdaten in die Datenbank ein
       const newReservation = await pool.query(
         'INSERT INTO reservations (date, time, customer_name, guest_count, employee_name, table_number, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-        [date, time, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
+        [formattedDate, time, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
       );
       console.log('[POST /api/reservations] New reservation:', newReservation.rows[0]);
 
@@ -48,6 +50,18 @@ router.post(
     }
   }
 );
+
+// Funktion zur Formatierung des Datums für PostgreSQL
+function formatDateForPostgres(date) {
+  const parts = date.split('/');
+  if (parts.length === 3) {
+    const [day, month, year] = parts;
+    return `${year}-${month}-${day}`;
+  }
+  throw new Error('Invalid date format received from client');
+}
+
+
 
 // Alle Reservierungen abrufen
 router.get('/', auth, async (req, res) => {
