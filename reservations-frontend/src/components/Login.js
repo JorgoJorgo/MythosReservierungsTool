@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import './Login.css'; // CSS-Datei für zentriertes Styling
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     username: 'jorgo',
@@ -37,34 +39,69 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  return (
-    <div>
-      <h2>Login</h2>
+  // return (
+  //   <div>
+  //     <h2>Login</h2>
+  //     {error && <p style={{ color: 'red' }}>{errorMessage}</p>}
+  //     <form onSubmit={onSubmit}>
+  //       <div>
+  //         <input
+  //           type='text'
+  //           placeholder='Username'
+  //           name='username'
+  //           value={username}
+  //           onChange={onChange}
+  //           required
+  //         />
+  //       </div>
+  //       <div>
+  //         <input
+  //           type='password'
+  //           placeholder='Password'
+  //           name='password'
+  //           value={password}
+  //           onChange={onChange}
+  //           minLength='6'
+  //           required
+  //         />
+  //       </div>
+  //       <input type='submit' value='Login' />
+  //     </form>
+  //   </div>
+  // );
+
+  return(
+    <div className="login-container">
       {error && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <form onSubmit={onSubmit}>
-        <div>
-          <input
-            type='text'
-            placeholder='Username'
-            name='username'
-            value={username}
-            onChange={onChange}
-            required
-          />
-        </div>
-        <div>
-          <input
-            type='password'
-            placeholder='Password'
-            name='password'
-            value={password}
-            onChange={onChange}
-            minLength='6'
-            required
-          />
-        </div>
-        <input type='submit' value='Login' />
-      </form>
+      <Card style={{ width: '30rem' ,justifyContent: 'center', alignItems:'center'}}>
+        <Card.Img style={{ width: '15rem' , justifyContent: 'center', alignItems:'center', paddingTop:'1rem'}} variant="top" src="./logo.png" />
+        <Card.Body>
+          <form onSubmit={onSubmit}>
+            <div>
+              <input
+                type='text'
+                placeholder='Username'
+                name='username'
+                value={username}
+                onChange={onChange}
+                required
+              />
+            </div>
+            <div style={{paddingBottom:'2rem'}}>
+              <input
+                type='password'
+                placeholder='Password'
+                name='password'
+                value={password}
+                onChange={onChange}
+                minLength='6'
+                required
+              />
+            </div>
+            <input type='submit' value='Login'/>
+          </form>
+        </Card.Body>
+      </Card>
     </div>
   );
 };

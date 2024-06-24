@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import './ReservationForm.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 function ReservationForm({ selectedDate }) {
   const formatDate = (date) => {
@@ -42,59 +45,65 @@ function ReservationForm({ selectedDate }) {
   };
 
   return (
-    <div className="reservation-form">
-      <h2>Reservierung erstellen für {formatDate(selectedDate)}</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="time">Uhrzeit:</label>
-        <input
-          type="time"
-          id="time"
-          name="time"
-          value={reservationData.time}
-          onChange={handleChange}
-        />
-        <label htmlFor="customer_name">Kundenname:</label>
-        <input
-          type="text"
+    <div>
+      <Form onSubmit={handleSubmit}>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Uhrzeit</Form.Label>
+        <Form.Control type="time" id="time" name="time" />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Kundenname</Form.Label>
+        <Form.Control type="text"
           id="customer_name"
           name="customer_name"
           value={reservationData.customer_name}
-          onChange={handleChange}
-        />
-        <label htmlFor="guest_count">Anzahl der Gäste:</label>
-        <input
-          type="number"
+          onChange={handleChange} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Anzahl der Gäste</Form.Label>
+        <Form.Control type="number"
           id="guest_count"
           name="guest_count"
           value={reservationData.guest_count}
-          onChange={handleChange}
-        />
-        <label htmlFor="employee_name">Mitarbeitername:</label>
-        <input
-          type="text"
+          onChange={handleChange} />
+      </Form.Group>
+
+
+      <Form.Group className="mb-3">
+        <Form.Label>Mitarbeitername</Form.Label>
+        <Form.Control type="text"
           id="employee_name"
           name="employee_name"
           value={reservationData.employee_name}
-          onChange={handleChange}
-        />
-        <label htmlFor="table_number">Tischnummer:</label>
-        <input
-          type="text"
+          onChange={handleChange} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Tischnummer</Form.Label>
+        <Form.Control type="text"
           id="table_number"
           name="table_number"
           value={reservationData.table_number}
-          onChange={handleChange}
-        />
-        <label htmlFor="phone_number">Telefonnummer:</label>
-        <input
-          type="tel"
+          onChange={handleChange} />
+      </Form.Group>
+
+
+      <Form.Group className="mb-3">
+        <Form.Label>Telefonnummer</Form.Label>
+        <Form.Control type="tel"
           id="phone_number"
           name="phone_number"
           value={reservationData.phone_number}
-          onChange={handleChange}
-        />
-        <input type="submit" value="Reservieren" />
-      </form>
+          onChange={handleChange} />
+      </Form.Group> 
+
+      <Button variant="primary" type="submit">
+        Speichern
+      </Button>
+    </Form>
     </div>
   );
 }

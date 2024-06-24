@@ -5,6 +5,7 @@ import ReservationForm from './components/ReservationForm';
 import ReservationList from './components/ReservationList';
 import LoginForm from './components/Login'; // Annahme: Komponente für das Login-Formular
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [date, setDate] = useState(new Date());
@@ -28,28 +29,36 @@ function App() {
     setLoggedIn(false); // Benutzer als ausgeloggt markieren
   };
 
-  const fetchReservations = async (selectedDate) => {
-    try {
-      const formattedDate = formatDate(selectedDate); // Funktion, die das Datum formatiert
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/reservations?date=${formattedDate}`, {
-        headers: {
-          'x-auth-token': token,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setReservations(data);
-    } catch (error) {
-      console.error('Error fetching reservations:', error);
-    }
-  };
+  // const fetchReservations = async (selectedDate) => {
+  //   try {
+  //     const formattedDate = formatDate(selectedDate); // Funktion, die das Datum formatiert
+  //     console.log("[fetchReservations] selectedDate :", selectedDate)
+  //     console.log("[fetchReservations] formattedDate :", formattedDate)
+  //     const token = localStorage.getItem('token');
+  //     const response2 = await fetch(`http://localhost:5000/api/reservations?date=${selectedDate}`, {
+  //       headers: {
+  //         'x-auth-token': token,
+  //       },
+  //     });
+  //     console.log("[fetchReservations] response2 : ", response2)
+  //     const response = await fetch(`http://localhost:5000/api/reservations?date=${formattedDate}`, {
+  //       headers: {
+  //         'x-auth-token': token,
+  //       },
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  //     const data = await response.json();
+  //     setReservations(data);
+  //   } catch (error) {
+  //     console.error('Error fetching reservations:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchReservations(date);
-  }, [date]);
+  // useEffect(() => {
+  //   fetchReservations(date);
+  // }, [date]);
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -59,7 +68,6 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Reservierungssystem</h1>
       {loggedIn ? (
         <>
           <div className="calendar-container">
@@ -74,7 +82,7 @@ function App() {
           <button onClick={handleLogout}>Logout</button>
         </>
       ) : (
-        <LoginForm onLogin={handleLogin} />
+        <LoginForm className="center" onLogin={handleLogin} />
       )}
     </div>
   );
