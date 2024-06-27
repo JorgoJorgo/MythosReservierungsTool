@@ -3,6 +3,7 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const pool = require('../db');
 const auth = require('../middleware/auth');
+const moment = require('moment-timezone');
 
 // Route zum Erstellen von Reservierungen
 router.post(
@@ -25,46 +26,67 @@ router.post(
     }
 
     // Extrahiere Benutzer-ID aus dem JWT-Token
-    console.log('[POST /api/reservations] User ID from JWT:', req.user.id);
+    //console.log('[POST /api/reservations] User ID from JWT:', req.user.id);
 
     // Extrahiere Reservierungsdaten aus der Anfrage
     console.log('[POST /api/reservations] Request body:', req.body);
-    const { date, time, customer_name, guest_count, employee_name, table_number, phone_number } = req.body;
+    var { date, time, customer_name, guest_count, employee_name, table_number, phone_number } = req.body;
 
-    // Formatieren des Datums von DD/MM/YYYY zu YYYY-MM-DD für PostgreSQL
-    const formattedDate = formatDateForPostgres(date); // Funktion zum Umwandeln des Datums
+    // Datum und Uhrzeit aus dem Request-Body
+    const [day, month, year] = date.split('/').map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
 
+    // Neues Date-Objekt erstellen und die entsprechenden Werte setzen
+    let parsedDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+
+    // ISO-String mit der aktualisierten Uhrzeit
+    const updatedDate = parsedDate.toISOString();
+
+    console.log(updatedDate); // "2024-06-27T12:00:00.000Z
+    date = updatedDate;
+    
     try {
       // Füge die Reservierungsdaten in die Datenbank ein
       const newReservation = await pool.query(
         'INSERT INTO reservations (date, time, customer_name, guest_count, employee_name, table_number, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-        [formattedDate, time, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
+        [date, time, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
       );
       console.log('[POST /api/reservations] New reservation:', newReservation.rows[0]);
 
       // Sende eine Bestätigung der erfolgreichen Reservierung zurück
       res.json(newReservation.rows[0]);
     } catch (err) {
-      console.error(err.message);
+      console.error("[POST /api/reservations] ERROR :",err.message);
+      console.log("[POST /api/reservations] date : ", date);
       res.status(500).send('Server Error');
     }
   }
 );
 
-// Funktion zur Formatierung des Datums für PostgreSQL
-function formatDateForPostgres(date) {
-  const parts = date.split('/');
-  if (parts.length === 3) {
-    const [day, month, year] = parts;
-    return `${year}-${month}-${day}`;
-  }
-  throw new Error('Invalid date format received from client');
-}
+// // Funktion zur Formatierung des Datums für PostgreSQL
+// function formatDateForPostgres(date) {
+//   const parts = date.split('/');
+//   if (parts.length === 3) {
+//     const [day, month, year] = parts;
+//     return `${year}-${month}-${day}`;
+//   }
+//   throw new Error('Invalid date format received from client');
+// }
 
 
 
 // Alle Reservierungen abrufen
 router.get('/', auth, async (req, res) => {
+  try {
+    
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// Alle Reservierungen abrufen
+router.get('/all', auth, async (req, res) => {
   try {
     // Alle Reservierungen aus der Datenbank abrufen
     const reservations = await pool.query('SELECT * FROM reservations');
@@ -75,6 +97,42 @@ router.get('/', auth, async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+
+
+// Alle Reservierungen für ein bestimmtes Datum abrufen
+router.get('/dailyReservation', auth, async (req, res) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ msg: 'Date is required' });
+  }
+
+  try {
+    // Das angegebene Datum in ein Moment-Objekt umwandeln und auf UTC setzen
+    const requestedDate = moment(date, 'DD/MM/YYYY').tz('UTC').startOf('day');
+
+    // Start und Ende des Tages in UTC festlegen
+    const startOfDay = requestedDate.format('YYYY-MM-DD 00:00:00');
+    const endOfDay = requestedDate.format('YYYY-MM-DD 23:59:59');
+
+    // SQL-Abfrage für Reservierungen an einem bestimmten Datum
+    const query = `SELECT * FROM reservations WHERE date >= $1 AND date <= $2`;
+    console.log('Query:', query);
+    console.log('RequestedDay:',requestedDate)
+    console.log('Start of Day:', startOfDay);
+    console.log('End of Day:', endOfDay);
+    console.log('----------------------------')
+    // Abfrage ausführen
+    const { rows } = await pool.query(query, [startOfDay, endOfDay]);
+
+    res.json(rows);
+  } catch (err) {
+    console.error('Error executing query:', err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 // Reservierung aktualisieren
 router.put(

@@ -11,16 +11,16 @@ const ReservationList = ({ selectedDate }) => {
   const fetchReservations = async (selectedDate) => {
     try {
       const formattedDate = formatDate(selectedDate); // Funktion, die das Datum formatiert
-      console.log("[ReservationList fetchReservations] selectedDate :", selectedDate)
-      console.log("[ReservationList fetchReservations] formattedDate :", formattedDate)
+      //console.log("[ReservationList fetchReservations] selectedDate :", selectedDate)
+      //console.log("[ReservationList fetchReservations] formattedDate :", formattedDate)
       const token = localStorage.getItem('token');
-      const response2 = await fetch(`http://localhost:5000/api/reservations?date=${selectedDate}`, {
+      const response2 = await fetch(`http://localhost:5000/api/reservations/dailyReservation?date=${selectedDate}`, {
         headers: {
           'x-auth-token': token,
         },
       });
       console.log("[ReservationList fetchReservations] response2 : ", response2)
-      const response = await fetch(`http://localhost:5000/api/reservations?date=${formattedDate}`, {
+      const response = await fetch(`http://localhost:5000/api/reservations/dailyReservation?date=${formattedDate}`, {
         headers: {
           'x-auth-token': token,
         },
@@ -49,7 +49,7 @@ const ReservationList = ({ selectedDate }) => {
         {reservations.length > 0 ? (
               reservations.map((reservation) => (
                 <Accordion.Item eventKey={reservation.id} id={reservation.id} key={reservation.id}>
-                  <Accordion.Header>Zeit: {reservation.time}, Kunde: {reservation.customer_name}, Personen: {reservation.guest_count} </Accordion.Header>
+                  <Accordion.Header>Zeit: {reservation.time}, Kunde: {reservation.customer_name}, Personen: {reservation.guest_count}, Datum: {formatDate(reservation.date)}</Accordion.Header>
                   <Accordion.Body>
                   <p>Zeit: {reservation.time} </p> 
                   <p>Kunde: {reservation.customer_name}</p>

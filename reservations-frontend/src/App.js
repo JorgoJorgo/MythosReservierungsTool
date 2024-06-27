@@ -29,36 +29,6 @@ function App() {
     setLoggedIn(false); // Benutzer als ausgeloggt markieren
   };
 
-  // const fetchReservations = async (selectedDate) => {
-  //   try {
-  //     const formattedDate = formatDate(selectedDate); // Funktion, die das Datum formatiert
-  //     console.log("[fetchReservations] selectedDate :", selectedDate)
-  //     console.log("[fetchReservations] formattedDate :", formattedDate)
-  //     const token = localStorage.getItem('token');
-  //     const response2 = await fetch(`http://localhost:5000/api/reservations?date=${selectedDate}`, {
-  //       headers: {
-  //         'x-auth-token': token,
-  //       },
-  //     });
-  //     console.log("[fetchReservations] response2 : ", response2)
-  //     const response = await fetch(`http://localhost:5000/api/reservations?date=${formattedDate}`, {
-  //       headers: {
-  //         'x-auth-token': token,
-  //       },
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error('Network response was not ok');
-  //     }
-  //     const data = await response.json();
-  //     setReservations(data);
-  //   } catch (error) {
-  //     console.error('Error fetching reservations:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchReservations(date);
-  // }, [date]);
 
   const formatDate = (date) => {
     const d = new Date(date);

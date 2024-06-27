@@ -6,8 +6,11 @@ import Form from 'react-bootstrap/Form';
 
 function ReservationForm({ selectedDate }) {
   const formatDate = (date) => {
+    console.log("[ReservationForm formatDate]: date = ", date)
+    console.log("[ReservationForm formatDate]: selectedDate = ", selectedDate)
     const d = new Date(date);
     const formattedDate = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+    console.log("[ReservationForm formatDate]: formattedDate = ", formattedDate)
     return formattedDate;
   };
 
