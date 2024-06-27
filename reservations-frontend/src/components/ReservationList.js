@@ -11,15 +11,9 @@ const ReservationList = ({ selectedDate }) => {
   const fetchReservations = async (selectedDate) => {
     try {
       const formattedDate = formatDate(selectedDate); // Funktion, die das Datum formatiert
-      //console.log("[ReservationList fetchReservations] selectedDate :", selectedDate)
-      //console.log("[ReservationList fetchReservations] formattedDate :", formattedDate)
+       
       const token = localStorage.getItem('token');
-      const response2 = await fetch(`http://localhost:5000/api/reservations/dailyReservation?date=${selectedDate}`, {
-        headers: {
-          'x-auth-token': token,
-        },
-      });
-      console.log("[ReservationList fetchReservations] response2 : ", response2)
+      
       const response = await fetch(`http://localhost:5000/api/reservations/dailyReservation?date=${formattedDate}`, {
         headers: {
           'x-auth-token': token,
@@ -44,6 +38,7 @@ const ReservationList = ({ selectedDate }) => {
 
   return (
     <div className="reservation-list">
+      <hr></hr>
       <h2>Reservierungen für {formatDate(selectedDate)}</h2>
         <Accordion>
         {reservations.length > 0 ? (
@@ -65,19 +60,7 @@ const ReservationList = ({ selectedDate }) => {
               <p>Keine Reservierungen für dieses Datum.</p>
             )}
         </Accordion>
-          {/* <ul>
-            {reservations.length > 0 ? (
-              reservations.map((reservation) => (
-                <li key={reservation.id}>
-                  <p>Zeit: {reservation.time}, Kunde: {reservation.customer_name}</p>
-                  <p>Mitarbeiter: {reservation.employee_name}, Gäste: {reservation.guest_count}</p>
-                  <p>Tisch: {reservation.table_number}, Telefon: {reservation.phone_number}</p>
-                </li>
-              ))
-            ) : (
-              <p>Keine Reservierungen für dieses Datum.</p>
-            )}
-          </ul> */}
+        <hr></hr>
     </div>
   );
 };

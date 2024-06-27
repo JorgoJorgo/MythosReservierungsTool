@@ -63,16 +63,6 @@ router.post(
   }
 );
 
-// // Funktion zur Formatierung des Datums für PostgreSQL
-// function formatDateForPostgres(date) {
-//   const parts = date.split('/');
-//   if (parts.length === 3) {
-//     const [day, month, year] = parts;
-//     return `${year}-${month}-${day}`;
-//   }
-//   throw new Error('Invalid date format received from client');
-// }
-
 
 
 // Alle Reservierungen abrufen
@@ -109,23 +99,24 @@ router.get('/dailyReservation', auth, async (req, res) => {
   }
 
   try {
-    // Das angegebene Datum in ein Moment-Objekt umwandeln und auf UTC setzen
-    const requestedDate = moment(date, 'DD/MM/YYYY').tz('UTC').startOf('day');
 
-    // Start und Ende des Tages in UTC festlegen
-    const startOfDay = requestedDate.format('YYYY-MM-DD 00:00:00');
-    const endOfDay = requestedDate.format('YYYY-MM-DD 23:59:59');
+    //console.log("[GET /dailyReservation] date :", date);
 
+    // Das angegebene Datum in ein Moment-Objekt umwandeln
+    const requestedDate1 = moment(date, 'DD/MM/YYYY').startOf('day');
+
+    // Start des Tages festlegen und Uhrzeit auf 12:00 setzen
+    const updatedDate = requestedDate1.set({ hour: 12 }).format('YYYY-MM-DD HH:mm:ss');
+
+    //console.log("[GET /dailyReservation] updatedDate :", updatedDate); // "2024-07-02 12:00:00"
+   
     // SQL-Abfrage für Reservierungen an einem bestimmten Datum
-    const query = `SELECT * FROM reservations WHERE date >= $1 AND date <= $2`;
-    console.log('Query:', query);
-    console.log('RequestedDay:',requestedDate)
-    console.log('Start of Day:', startOfDay);
-    console.log('End of Day:', endOfDay);
-    console.log('----------------------------')
+    const query = 'SELECT * FROM reservations where date = $1';
+    
     // Abfrage ausführen
-    const { rows } = await pool.query(query, [startOfDay, endOfDay]);
-
+    const { rows } = await pool.query(query, [updatedDate]);
+    //console.log("[GET /dailyReservation] rows :", rows);
+    //console.log("---")
     res.json(rows);
   } catch (err) {
     console.error('Error executing query:', err.message);
