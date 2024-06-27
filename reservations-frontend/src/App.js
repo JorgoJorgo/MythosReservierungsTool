@@ -9,7 +9,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [date, setDate] = useState(new Date());
-  const [reservations, setReservations] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false); // Zustand für den eingeloggten Zustand
   const [user, setUser] = useState(null); // Zustand für Benutzerdaten
 
