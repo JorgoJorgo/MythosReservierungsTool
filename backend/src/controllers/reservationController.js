@@ -100,15 +100,15 @@ router.get('/dailyReservation', auth, async (req, res) => {
 
   try {
 
-    //console.log("[GET /dailyReservation] date :", date);
+    console.log("[GET /dailyReservation] date :", date);
 
     // Das angegebene Datum in ein Moment-Objekt umwandeln
     const requestedDate1 = moment(date, 'DD/MM/YYYY').startOf('day');
 
     // Start des Tages festlegen und Uhrzeit auf 12:00 setzen
-    const updatedDate = requestedDate1.set({ hour: 12 }).format('YYYY-MM-DD HH:mm:ss');
+    const updatedDate = requestedDate1.set({ hour: 12 }).format('YYYY-MM-DD');
 
-    //console.log("[GET /dailyReservation] updatedDate :", updatedDate); // "2024-07-02 12:00:00"
+    console.log("[GET /dailyReservation] updatedDate :", updatedDate); // "2024-07-02 12:00:00"
    
     // SQL-Abfrage für Reservierungen an einem bestimmten Datum
     const query = 'SELECT * FROM reservations where date = $1';
