@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-function ReservationForm({ selectedDate }) {
+function ReservationForm({ selectedDate, onReservationSaved }) {
   const formatDate = (date) => {
     const d = new Date(date);
     const formattedDate = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
@@ -23,9 +23,9 @@ function ReservationForm({ selectedDate }) {
 
   // useEffect, um das Datum zu aktualisieren, wenn sich selectedDate ändert
   useEffect(() => {
-    setReservationData(prevState => ({
+    setReservationData((prevState) => ({
       ...prevState,
-      date: formatDate(selectedDate)
+      date: formatDate(selectedDate),
     }));
   }, [selectedDate]);
 
@@ -34,17 +34,25 @@ function ReservationForm({ selectedDate }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await fetch('http://localhost:5000/api/reservations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token
+          'x-auth-token': token,
         },
-        body: JSON.stringify(reservationData)
+        body: JSON.stringify(reservationData),
       });
-      const data = await response.json();
-      console.log("[ReservationForm handleSubmit] reservationData : ", reservationData);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("[ReservationForm handleSubmit] reservationData:", reservationData);
+        alert('Reservierung erfolgreich gespeichert!');
+        
+        // Aufruf der onReservationSaved Funktion nach erfolgreichem Speichern
+        if (onReservationSaved) {
+          onReservationSaved();
+        }
+      }
     } catch (error) {
       console.error('Error:', error);
     }
@@ -66,51 +74,61 @@ function ReservationForm({ selectedDate }) {
 
             <Form.Group className="mb-3">
               <Form.Label>Kundenname</Form.Label>
-              <Form.Control type="text"
+              <Form.Control
+                type="text"
                 id="customer_name"
                 name="customer_name"
                 value={reservationData.customer_name}
-                onChange={handleChange} />
+                onChange={handleChange}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Anzahl der Gäste</Form.Label>
-              <Form.Control type="number"
+              <Form.Control
+                type="number"
                 id="guest_count"
                 name="guest_count"
                 value={reservationData.guest_count}
-                onChange={handleChange} />
+                onChange={handleChange}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Mitarbeitername</Form.Label>
-              <Form.Control type="text"
+              <Form.Control
+                type="text"
                 id="employee_name"
                 name="employee_name"
                 value={reservationData.employee_name}
-                onChange={handleChange} />
+                onChange={handleChange}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Tischnummer</Form.Label>
-              <Form.Control type="text"
+              <Form.Control
+                type="text"
                 id="table_number"
                 name="table_number"
                 value={reservationData.table_number}
-                onChange={handleChange} />
+                onChange={handleChange}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Telefonnummer</Form.Label>
-              <Form.Control type="tel"
+              <Form.Control
+                type="tel"
                 id="phone_number"
                 name="phone_number"
                 value={reservationData.phone_number}
-                onChange={handleChange} />
+                onChange={handleChange}
+              />
             </Form.Group>
           </div>
           <div className="button-container">
-            <Button variant="primary" type="submit">
+            <Button variant="success" type="submit">
               Speichern
             </Button>
           </div>

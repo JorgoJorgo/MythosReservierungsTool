@@ -1,33 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import ReservationForm from './components/ReservationForm';
 import ReservationList from './components/ReservationList';
-import LoginForm from './components/Login'; // Annahme: Komponente für das Login-Formular
+import LoginForm from './components/Login'; 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
 
 function App() {
   const [date, setDate] = useState(new Date());
-  const [loggedIn, setLoggedIn] = useState(false); // Zustand für den eingeloggten Zustand
-  const [user, setUser] = useState(null); // Zustand für Benutzerdaten
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   // Funktion zum Einloggen
   const handleLogin = (userData) => {
-    // Hier normalerweise eine API-Anfrage zum Einloggen
-    // Nach erfolgreichem Einloggen Token im localStorage speichern
-    localStorage.setItem('token', userData.token);
-    setUser(userData.user); // Speichert Benutzerdaten im Zustand
-    setLoggedIn(true); // Benutzer als eingeloggt markieren
+    sessionStorage.setItem('token', userData.token);
+    setUser(userData.user);
+    setLoggedIn(true);
   };
 
   // Funktion zum Ausloggen
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Token aus localStorage entfernen
-    setUser(null); // Benutzerdaten im Zustand zurücksetzen
-    setLoggedIn(false); // Benutzer als ausgeloggt markieren
+    sessionStorage.removeItem('token');
+    setUser(null);
+    setLoggedIn(false);
   };
 
+  // Funktion, um nach einer Reservierung das Datum neu zu setzen (kann auf den gleichen Tag gesetzt werden)
+  const handleReservationSaved = () => {
+    setDate(new Date(date));  // Aktualisiert das Datum, um eine Neuladen der ReservationList zu erzwingen
+  };
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -46,9 +49,14 @@ function App() {
             <ReservationList selectedDate={date} />
           </div>
           <div className="reservation-form">
-            <ReservationForm selectedDate={date} />
+            {/* ReservationForm erhält eine Callback-Funktion als Prop */}
+            <ReservationForm selectedDate={date} onReservationSaved={handleReservationSaved} />
           </div>
-          <button onClick={handleLogout}>Logout</button>
+          <hr />
+          <Button variant="danger" type="submit" onClick={handleLogout}>
+            Abmelden
+          </Button>
+          <hr />
         </>
       ) : (
         <LoginForm className="center" onLogin={handleLogin} />

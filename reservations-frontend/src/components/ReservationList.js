@@ -12,7 +12,7 @@ const ReservationList = ({ selectedDate }) => {
     try {
       const formattedDate = formatDate(selectedDate); // Funktion, die das Datum formatiert
        
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       
       const response = await fetch(`http://localhost:5000/api/reservations/dailyReservation?date=${formattedDate}`, {
         headers: {
