@@ -14,11 +14,11 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
   const [reservationData, setReservationData] = useState({
     date: formatDate(selectedDate), // Datum im Format 'DD/MM/YYYY'
     time: '12:00', // Beispielzeit
-    customer_name: 'Max Mustermann', // Beispielname
+    customer_name: 'Mustermann', // Beispielname
     guest_count: '4', // Beispielanzahl Gäste
-    employee_name: 'Anna Mitarbeiter', // Beispielname des Mitarbeiters
-    table_number: '5', // Beispiel Tischnummer
-    phone_number: '123456789' // Beispiel Telefonnummer
+    employee_name: 'Jorgo', // Beispielname des Mitarbeiters
+    table_number: '0', // Beispiel Tischnummer
+    phone_number: '017622157949' // Beispiel Telefonnummer
   });
 
   // useEffect, um das Datum zu aktualisieren, wenn sich selectedDate ändert
@@ -128,7 +128,7 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
             </Form.Group>
           </div>
           <div className="button-container">
-            <Button variant="success" type="submit">
+            <Button variant="success" type="submit" size="lg">
               Speichern
             </Button>
           </div>

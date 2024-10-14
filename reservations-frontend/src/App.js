@@ -53,7 +53,7 @@ function App() {
             <ReservationForm selectedDate={date} onReservationSaved={handleReservationSaved} />
           </div>
           <hr />
-          <Button variant="danger" type="submit" onClick={handleLogout}>
+          <Button variant="danger" type="submit" onClick={handleLogout} size="lg">
             Abmelden
           </Button>
           <hr />
