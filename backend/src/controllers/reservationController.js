@@ -25,43 +25,53 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Extrahiere Benutzer-ID aus dem JWT-Token
-    //console.log('[POST /api/reservations] User ID from JWT:', req.user.id);
-
     // Extrahiere Reservierungsdaten aus der Anfrage
     console.log('[POST /api/reservations] Request body:', req.body);
-    var { date, time, customer_name, guest_count, employee_name, table_number, phone_number } = req.body;
+    let { date, time, customer_name, guest_count, employee_name, table_number, phone_number } = req.body;
 
     // Datum und Uhrzeit aus dem Request-Body
     const [day, month, year] = date.split('/').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
-
-    // Neues Date-Objekt erstellen und die entsprechenden Werte setzen
-    let parsedDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
-
-    // ISO-String mit der aktualisierten Uhrzeit
-    const updatedDate = parsedDate.toISOString();
-
-    console.log(updatedDate); // "2024-06-27T12:00:00.000Z
-    date = updatedDate;
     
+    console.log('[POST /api/reservations] Day:', day);
+    console.log('[POST /api/reservations] Month:', month);
+    console.log('[POST /api/reservations] Year:', year);
+
+    // Neues Date-Objekt erstellen (UTC)
+    let parsedDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+    console.log('[POST /api/reservations] ParsedDate (UTC):', parsedDate);
+
+    // Konvertiere das Datum in die lokale Zeitzone (Europe/Berlin)
+    const berlinTime = parsedDate.toLocaleString("sv-SE", { timeZone: "Europe/Berlin" });
+    const updatedDate = new Date(berlinTime).toISOString();
+    
+    console.log('[POST /api/reservations] UpdatedDate (Berlin):', updatedDate);
+
+    // Zeit im HH:MM:SS Format formatieren
+    const formattedTime = `${hours}:${minutes}:00`;
+
     try {
       // Füge die Reservierungsdaten in die Datenbank ein
       const newReservation = await pool.query(
         'INSERT INTO reservations (date, time, customer_name, guest_count, employee_name, table_number, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-        [date, time, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
+        [updatedDate, formattedTime, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
       );
+      
       console.log('[POST /api/reservations] New reservation:', newReservation.rows[0]);
 
       // Sende eine Bestätigung der erfolgreichen Reservierung zurück
       res.json(newReservation.rows[0]);
     } catch (err) {
-      console.error("[POST /api/reservations] ERROR :",err.message);
-      console.log("[POST /api/reservations] date : ", date);
+      console.error("[POST /api/reservations] ERROR:", err.message);
+      console.log("[POST /api/reservations] Date to insert:", updatedDate);
       res.status(500).send('Server Error');
     }
   }
 );
+
+
+
+
 
 
 
@@ -99,30 +109,28 @@ router.get('/dailyReservation', auth, async (req, res) => {
   }
 
   try {
-
     console.log("[GET /dailyReservation] date :", date);
 
-    // Das angegebene Datum in ein Moment-Objekt umwandeln
-    const requestedDate1 = moment(date, 'DD/MM/YYYY').startOf('day');
+    // Datum konvertieren
+    const requestedDate = moment(date, 'DD/MM/YYYY').startOf('day');
 
-    // Start des Tages festlegen und Uhrzeit auf 12:00 setzen
-    const updatedDate = requestedDate1.set({ hour: 12 }).format('YYYY-MM-DD');
+    // Format für die SQL-Abfrage
+    const updatedDate = requestedDate.format('YYYY-MM-DD');
 
-    console.log("[GET /dailyReservation] updatedDate :", updatedDate); // "2024-07-02 12:00:00"
-   
+    console.log("[GET /dailyReservation] updatedDate :", updatedDate); // "2024-10-18"
+
     // SQL-Abfrage für Reservierungen an einem bestimmten Datum
-    const query = 'SELECT * FROM reservations where date = $1';
-    
+    const query = 'SELECT * FROM reservations WHERE date::date = $1'; // Vergleiche nur das Datum
+
     // Abfrage ausführen
     const { rows } = await pool.query(query, [updatedDate]);
-    //console.log("[GET /dailyReservation] rows :", rows);
-    //console.log("---")
     res.json(rows);
   } catch (err) {
     console.error('Error executing query:', err.message);
     res.status(500).send('Server Error');
   }
 });
+
 
 
 // Reservierung aktualisieren
