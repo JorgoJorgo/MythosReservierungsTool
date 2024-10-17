@@ -30,42 +30,43 @@ router.post(
     let { date, time, customer_name, guest_count, employee_name, table_number, phone_number } = req.body;
 
     // Datum und Uhrzeit aus dem Request-Body
-    const [day, month, year] = date.split('/').map(Number);
-    const [hours, minutes] = time.split(':').map(Number);
-    
-    console.log('[POST /api/reservations] Day:', day);
-    console.log('[POST /api/reservations] Month:', month);
-    console.log('[POST /api/reservations] Year:', year);
+const [day, month, year] = date.split('/').map(Number);
+const [hours, minutes] = time.split(':').map(Number);
 
-    // Neues Date-Objekt erstellen (UTC)
-    let parsedDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
-    console.log('[POST /api/reservations] ParsedDate (UTC):', parsedDate);
+console.log('[POST /api/reservations] Day:', day);
+console.log('[POST /api/reservations] Month:', month);
+console.log('[POST /api/reservations] Year:', year);
 
-    // Konvertiere das Datum in die lokale Zeitzone (Europe/Berlin)
-    const berlinTime = parsedDate.toLocaleString("sv-SE", { timeZone: "Europe/Berlin" });
-    const updatedDate = new Date(berlinTime).toISOString();
-    
-    console.log('[POST /api/reservations] UpdatedDate (Berlin):', updatedDate);
+// Neues Date-Objekt erstellen (UTC)
+let parsedDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+console.log('[POST /api/reservations] ParsedDate (UTC):', parsedDate);
 
-    // Zeit im HH:MM:SS Format formatieren
-    const formattedTime = `${hours}:${minutes}:00`;
+// Speichere das Datum direkt in UTC
+const updatedDate = parsedDate.toISOString();
 
-    try {
-      // Füge die Reservierungsdaten in die Datenbank ein
-      const newReservation = await pool.query(
-        'INSERT INTO reservations (date, time, customer_name, guest_count, employee_name, table_number, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-        [updatedDate, formattedTime, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
-      );
-      
-      console.log('[POST /api/reservations] New reservation:', newReservation.rows[0]);
+console.log('[POST /api/reservations] UpdatedDate (UTC):', updatedDate);
 
-      // Sende eine Bestätigung der erfolgreichen Reservierung zurück
-      res.json(newReservation.rows[0]);
-    } catch (err) {
-      console.error("[POST /api/reservations] ERROR:", err.message);
-      console.log("[POST /api/reservations] Date to insert:", updatedDate);
-      res.status(500).send('Server Error');
-    }
+// Zeit im HH:MM:SS Format formatieren
+const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+
+try {
+  // Füge die Reservierungsdaten in die Datenbank ein
+  const newReservation = await pool.query(
+    'INSERT INTO reservations (date, time, customer_name, guest_count, employee_name, table_number, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    [updatedDate, formattedTime, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
+  );
+  
+  console.log('[POST /api/reservations] New reservation:', newReservation.rows[0]);
+
+  // Sende eine Bestätigung der erfolgreichen Reservierung zurück
+  res.json(newReservation.rows[0]);
+} catch (err) {
+  console.error("[POST /api/reservations] ERROR:", err.message);
+  console.log("[POST /api/reservations] Date to insert:", updatedDate);
+  res.status(500).send('Server Error');
+}
+
+
   }
 );
 
@@ -114,22 +115,30 @@ router.get('/dailyReservation', auth, async (req, res) => {
     // Datum konvertieren
     const requestedDate = moment(date, 'DD/MM/YYYY').startOf('day');
 
-    // Format für die SQL-Abfrage
-    const updatedDate = requestedDate.format('YYYY-MM-DD');
+    // Start- und Endzeit des Tages in UTC berechnen
+    const startOfDayUTC = requestedDate.clone().utc().format();
+    const endOfDayUTC = requestedDate.clone().utc().add(1, 'day').format();
 
-    console.log("[GET /dailyReservation] updatedDate :", updatedDate); // "2024-10-18"
+    console.log("[GET /dailyReservation] startOfDayUTC :", startOfDayUTC);
+    console.log("[GET /dailyReservation] endOfDayUTC :", endOfDayUTC);
 
-    // SQL-Abfrage für Reservierungen an einem bestimmten Datum
-    const query = 'SELECT * FROM reservations WHERE date::date = $1'; // Vergleiche nur das Datum
+    // SQL-Abfrage für Reservierungen zwischen Start und Ende des Tages
+    const query = `
+      SELECT * FROM reservations
+      WHERE date >= $1 AND date < $2
+    `;
 
     // Abfrage ausführen
-    const { rows } = await pool.query(query, [updatedDate]);
+    const { rows } = await pool.query(query, [startOfDayUTC, endOfDayUTC]);
     res.json(rows);
   } catch (err) {
     console.error('Error executing query:', err.message);
     res.status(500).send('Server Error');
   }
 });
+
+
+
 
 
 

@@ -115,9 +115,11 @@ const ReservationList = ({ selectedDate }) => {
                         type="time" 
                         name="time" 
                         value={editedData.time} 
+                        step="60" // Sekundenschritte deaktivieren
                         onChange={handleInputChange} 
                       />
                     </Form.Group>
+
                     <Form.Group className="mb-3">
                       <Form.Label>Kunde</Form.Label>
                       <Form.Control 
