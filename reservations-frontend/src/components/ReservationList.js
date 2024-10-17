@@ -24,7 +24,7 @@ const ReservationList = ({ selectedDate }) => {
         },
       });
       const data = await response.json();
-      setReservations(data);
+      setReservations(data.sort((a, b) => a.time.localeCompare(b.time)));
     } catch (error) {
       console.error('Error fetching reservations:', error);
     }
