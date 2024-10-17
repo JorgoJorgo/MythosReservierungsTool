@@ -36,6 +36,11 @@ const ReservationList = ({ selectedDate }) => {
     return formattedDate;
   };
 
+  const formatDateForUI = (date) => {
+    const d = new Date(date);
+    const formattedDate = `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`;
+    return formattedDate;
+  };
   // Bearbeiten-Funktion
   const handleEditClick = (reservation) => {
     setEditReservationId(reservation.id);
@@ -45,7 +50,7 @@ const ReservationList = ({ selectedDate }) => {
   // Änderungen speichern
   const handleSaveClick = async () => {
     try {
-      console.log("[ResarvationList handleSaveClick]")
+      console.log("[ReservationList handleSaveClick]")
       console.log(editedData)
       const token = sessionStorage.getItem('token');
       const response = await fetch(`http://localhost:5000/api/reservations/${editReservationId}`, {
@@ -93,18 +98,26 @@ const ReservationList = ({ selectedDate }) => {
 
   // Eingaben für die Bearbeitung anpassen
   const handleInputChange = (e) => {
-    setEditedData({ ...editedData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+
+    if (name === "time" && value) {
+      // Stelle sicher, dass die Zeit im 24-Stunden-Format bleibt
+      const [hours, minutes] = value.split(":");
+      value = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+    }
+
+    setEditedData({ ...editedData, [name]: value });
   };
 
   return (
     <div className="reservation-list">
       <hr></hr>
-      <h2>Reservierungen für {formatDate(selectedDate)}</h2>
+      <h2>Reservierungen für {formatDateForUI(selectedDate)}</h2>
       <Accordion>
         {reservations.length > 0 ? (
           reservations.map((reservation) => (
             <Accordion.Item eventKey={reservation.id} id={reservation.id} key={reservation.id}>
-              <Accordion.Header>Zeit: {reservation.time}, Kunde: {reservation.customer_name}, Personen: {reservation.guest_count}, Datum: {formatDate(reservation.date)}</Accordion.Header>
+              <Accordion.Header> <h5>{reservation.time.slice(0, 5)} - {reservation.customer_name} - {reservation.guest_count} P </h5></Accordion.Header>
               <Accordion.Body>
                 {editReservationId === reservation.id ? (
                   // Editierbare Felder, wenn die Reservierung bearbeitet wird
@@ -114,7 +127,7 @@ const ReservationList = ({ selectedDate }) => {
                       <Form.Control 
                         type="time" 
                         name="time" 
-                        value={editedData.time} 
+                        value={editedData.time.slice(0, 5)} // Schneidet die Sekunden ab und zeigt nur HH:MM an
                         step="60" // Sekundenschritte deaktivieren
                         onChange={handleInputChange} 
                       />
@@ -155,7 +168,7 @@ const ReservationList = ({ selectedDate }) => {
                 ) : (
                   // Nicht bearbeitbare Felder, wenn die Reservierung nicht bearbeitet wird
                   <>
-                    <p>Zeit: {reservation.time}</p>
+                    <p>Zeit: {reservation.time.slice(0, 5)}</p>
                     <p>Kunde: {reservation.customer_name}</p>
                     <p>Gäste: {reservation.guest_count}</p>
                     <p>Tisch: {reservation.table_number}</p>

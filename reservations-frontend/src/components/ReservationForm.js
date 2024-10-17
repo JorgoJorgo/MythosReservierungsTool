@@ -67,10 +67,22 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
       <div className="form-wrapper">
         <Form onSubmit={handleSubmit} className="reservation-form">
           <div className="form-fields">
-            <Form.Group className="mb-3">
-              <Form.Label>Uhrzeit</Form.Label>
-              <Form.Control type="time" id="time" name="time" onChange={handleChange} />
-            </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Uhrzeit</Form.Label>
+            <Form.Control 
+              type="time"
+              id="time" 
+              name="time" 
+              value={reservationData.time} 
+              onChange={(e) => {
+                // Stellt sicher, dass die Zeit im 24-Stunden-Format bleibt
+                const timeValue = e.target.value;
+                setReservationData({ ...reservationData, time: timeValue });
+              }} 
+              step="60" // Sekundenschritte deaktivieren, nur Minuten anpassen
+            />
+          </Form.Group>
+
 
             <Form.Group className="mb-3">
               <Form.Label>Kundenname</Form.Label>
