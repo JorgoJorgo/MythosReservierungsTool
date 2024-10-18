@@ -107,17 +107,6 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Mitarbeitername</Form.Label>
-              <Form.Control
-                type="text"
-                id="employee_name"
-                name="employee_name"
-                value={reservationData.employee_name}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
               <Form.Label>Tischnummer</Form.Label>
               <Form.Control
                 type="text"
@@ -136,6 +125,19 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
                 name="phone_number"
                 value={reservationData.phone_number}
                 onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Mitarbeitername</Form.Label>
+              <Form.Control
+                type="text"
+                id="employee_name"
+                name="employee_name"
+                value={localStorage.getItem("username")}
+                onChange={handleChange}
+                disabled
+                readOnly
               />
             </Form.Group>
           </div>

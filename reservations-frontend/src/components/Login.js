@@ -32,6 +32,7 @@ const Login = ({ onLogin }) => {
         setErrorMessage('');
         // Token im lokalen Speicher speichern
         localStorage.setItem('token', data.token);
+        localStorage.setItem('username',username)
         onLogin(data); // Aufruf der onLogin Prop mit den Benutzerdaten
       }
     } catch (error) {
