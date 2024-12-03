@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import {settings} from "../settings"
 import './Login.css'; // CSS-Datei für zentriertes Styling
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
@@ -16,7 +17,7 @@ const Login = ({ onLogin }) => {
   const onSubmit = async e => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${settings.server_url}api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

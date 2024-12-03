@@ -1,20 +1,13 @@
 const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'reservations_db',
-  password: 'testing187',
-  port: 5432,
-});
+require('dotenv').config();
 
 //einloggen am laptop
 const poolLaptop = new Pool({
-  user: 'myuser',          // Dein Benutzername
-  host: 'localhost',
+  user: process.env.db_user,          // Dein Benutzername
+  host: '127.0.0.1',
   database: 'reservations_db',
-  password: 'mypassword',  // Dein Passwort
-  port: 5432,
+  password: process.env.db_password,  // Dein Passwort
+  port: process.env.db_port,
 });
 
 //hier muss das jeweilige auskommentiert werden

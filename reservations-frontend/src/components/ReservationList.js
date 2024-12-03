@@ -3,6 +3,7 @@ import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import './ReservationList.css';
+import {settings} from "../settings"
 
 const ReservationList = ({ selectedDate }) => {
   const [reservations, setReservations] = useState([]);
@@ -18,7 +19,7 @@ const ReservationList = ({ selectedDate }) => {
       const formattedDate = formatDate(selectedDate);
       const token = sessionStorage.getItem('token');
       
-      const response = await fetch(`http://localhost:5000/api/reservations/dailyReservation?date=${formattedDate}`, {
+      const response = await fetch(`${settings.server_url}api/reservations/dailyReservation?date=${formattedDate}`, {
         headers: {
           'x-auth-token': token,
         },
@@ -53,7 +54,7 @@ const ReservationList = ({ selectedDate }) => {
       console.log("[ReservationList handleSaveClick]")
       console.log(editedData)
       const token = sessionStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/reservations/${editReservationId}`, {
+      const response = await fetch(`${settings.server_url}api/reservations/${editReservationId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +79,7 @@ const ReservationList = ({ selectedDate }) => {
   const handleDeleteClick = async (reservationId) => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/reservations/${reservationId}`, {
+      const response = await fetch(`${settings.server_url}api/reservations/${reservationId}`, {
         method: 'DELETE',
         headers: {
           'x-auth-token': token

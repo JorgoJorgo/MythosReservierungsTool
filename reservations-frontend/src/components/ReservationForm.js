@@ -3,6 +3,7 @@ import './ReservationForm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import {settings} from "../settings"
 
 function ReservationForm({ selectedDate, onReservationSaved }) {
   const formatDate = (date) => {
@@ -35,7 +36,7 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/reservations', {
+      const response = await fetch(`${settings.server_url}api/reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
