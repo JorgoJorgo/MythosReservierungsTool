@@ -27,7 +27,7 @@ router.post(
 
     // Extrahiere Reservierungsdaten aus der Anfrage
     console.log('[POST /api/reservations] Request body:', req.body);
-    let { date, time, customer_name, guest_count, employee_name, table_number, phone_number } = req.body;
+    let { date, time, customer_name, guest_count, employee_name, table_number, phone_number, Note} = req.body;
 
     // Datum und Uhrzeit aus dem Request-Body
 const [day, month, year] = date.split('/').map(Number);
@@ -49,11 +49,13 @@ console.log('[POST /api/reservations] UpdatedDate (UTC):', updatedDate);
 // Zeit im HH:MM:SS Format formatieren
 const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
 
+console.log("[POST /api/reservations] Note: ", Note);
+//console.log("[POST /api/reservations] note: ", note);
 try {
   // Füge die Reservierungsdaten in die Datenbank ein
   const newReservation = await pool.query(
-    'INSERT INTO reservations (date, time, customer_name, guest_count, employee_name, table_number, phone_number, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-    [updatedDate, formattedTime, customer_name, guest_count, employee_name, table_number, phone_number, req.user.id]
+    'INSERT INTO reservations (date, time, customer_name, guest_count, employee_name, table_number, phone_number, "Note", user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+    [updatedDate, formattedTime, customer_name, guest_count, employee_name, table_number, phone_number, Note, req.user.id]
   );
   
   console.log('[POST /api/reservations] New reservation:', newReservation.rows[0]);
@@ -71,8 +73,50 @@ try {
 );
 
 
+//Route zum markieren einer Reservierung
+router.post(
+  '/markReservation',
+  [
+    auth,
+    check('reservation_id', 'Reservation ID is required and should be an integer').isInt()
+  ],
+  async (req, res) => {
+    console.log('[/markReservation] Request received at /markReservation:', req.body);
+    // Validierungsfehler prüfen
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
+    // Reservation-ID aus der Anfrage extrahieren
+    const { reservation_id } = req.body;
 
+    try {
+      // Abfrage zur Aktualisierung des Flags `marked`
+      const result = await pool.query(
+        `
+        UPDATE reservations
+        SET "Marked" = NOT "Marked"
+        WHERE id = $1
+        RETURNING *
+        `,
+        [reservation_id]
+      );
+
+      // Überprüfen, ob eine Reservierung aktualisiert wurde
+      if (result.rowCount === 0) {
+        return res.status(404).json({ msg: 'Reservation not found' });
+      }
+
+      // Rückgabe der aktualisierten Reservierung
+      console.log(`[POST /markReservation] Updated reservation:`, result.rows[0]);
+      res.json(result.rows[0]);
+    } catch (err) {
+      console.error(`[POST /markReservation] ERROR:`, err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
 
 
 
@@ -164,14 +208,14 @@ router.put(
 
     // Extrahiere Reservierungsdaten aus der Anfrage
     console.log('[PUT /api/reservations/:id] Request body:', req.body);
-    const { date, time, customer_name, guest_count, employee_name, table_number, phone_number } = req.body;
+    const { date, time, customer_name, guest_count, employee_name, table_number, phone_number, Note } = req.body;
     const { id } = req.params;
 
     try {
       // Reservierung in der Datenbank aktualisieren
       const updatedReservation = await pool.query(
-        'UPDATE reservations SET date = $1, time = $2, customer_name = $3, guest_count = $4, employee_name = $5, table_number = $6, phone_number = $7 WHERE id = $8 RETURNING *',
-        [date, time, customer_name, guest_count, employee_name, table_number, phone_number, id]
+        'UPDATE reservations SET date = $1, time = $2, customer_name = $3, guest_count = $4, employee_name = $5, table_number = $6, phone_number = $7, "Note" = $8 WHERE id = $9 RETURNING *',
+        [date, time, customer_name, guest_count, employee_name, table_number, phone_number,Note, id]
       );
       console.log('[PUT /api/reservations/:id] Updated reservation:', updatedReservation.rows[0]);
 

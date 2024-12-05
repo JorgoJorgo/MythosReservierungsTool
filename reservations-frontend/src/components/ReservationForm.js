@@ -19,7 +19,8 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
     guest_count: '4', // Beispielanzahl Gäste
     employee_name: 'Jorgo', // Beispielname des Mitarbeiters
     table_number: '0', // Beispiel Tischnummer
-    phone_number: '017622157949' // Beispiel Telefonnummer
+    phone_number: '017622157949', // Beispiel Telefonnummer
+    Note: ''
   });
 
   // useEffect, um das Datum zu aktualisieren, wenn sich selectedDate ändert
@@ -125,6 +126,17 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
                 id="phone_number"
                 name="phone_number"
                 value={reservationData.phone_number}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Notiz</Form.Label>
+              <Form.Control
+                type="text"
+                id="Note"
+                name="Note"
+                value={reservationData.Note}
                 onChange={handleChange}
               />
             </Form.Group>
