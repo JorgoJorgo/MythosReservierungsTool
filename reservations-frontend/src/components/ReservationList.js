@@ -62,35 +62,34 @@ const ReservationList = ({ selectedDate }) => {
         },
         body: JSON.stringify({ reservation_id: reservation.id }),
       });
-
+  
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Fehler: ${errorText}`);
       }
-      console.log("Reservation going in :", reservation)
+  
       const updatedReservation = await response.json();
-      console.log("Updated Reservation", updatedReservation)
-      console.log("PRE Reservations: ", reservations)
-      console.log("PRE Marked Reservations: ", markedReservations)
-      console.log("updatedReservation.marked: ",updatedReservation.Marked)
-
-      if (updatedReservation.Marked) { //wenn ich die reservierung markiere muss sie aus den unmarkierten raus und in die markierten rein
-        setMarkedReservations((prev) => [...prev, updatedReservation]);
+  
+      if (updatedReservation.Marked) {
+        setMarkedReservations((prev) =>
+          [...prev, updatedReservation].sort((a, b) => a.time.localeCompare(b.time))
+        );
         setReservations((prev) =>
           prev.filter((res) => res.id !== updatedReservation.id)
         );
-      } else { //wenn ich die reservierung DEmarkiere muss sie aus den markierten raus und in die markierten rein
-        setReservations((prev) => [...prev, updatedReservation]);
+      } else {
+        setReservations((prev) =>
+          [...prev, updatedReservation].sort((a, b) => a.time.localeCompare(b.time))
+        );
         setMarkedReservations((prev) =>
           prev.filter((res) => res.id !== updatedReservation.id)
         );
       }
-      console.log("AFTER Reservations: ", reservations)
-      console.log("AFTER Marked Reservations: ", markedReservations)
     } catch (error) {
       console.error('Error toggling mark on reservation:', error);
     }
   };
+  
 
   const handleEditClick = (reservation) => {
     setEditReservationId(reservation.id); // Setzt die ID der zu bearbeitenden Reservierung
