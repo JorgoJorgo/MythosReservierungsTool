@@ -49,9 +49,9 @@ function App() {
           <div className="reservations-list">
             <ReservationList selectedDate={date} />
           </div>
-          {/*<div className="daily-note">
+          <div className="daily-note">
             <DailyNote selectedDate={date} />
-          </div>*/}
+          </div>
           <div className="reservation-form">
             {/* ReservationForm erhält eine Callback-Funktion als Prop */}
             <ReservationForm selectedDate={date} onReservationSaved={handleReservationSaved} />
