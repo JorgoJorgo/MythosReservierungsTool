@@ -40,12 +40,6 @@ const ReservationList = ({ selectedDate }) => {
 
       setReservations(unmarked);
       setMarkedReservations(marked);
-      console.log("[fetchReservations] unmarked Reservations:",unmarked)
-      console.log("[fetchReservations] marked Reservations:", marked)
-      reservations.forEach(element => {
-        console.log("[fetchReservations] note: ",element.Note)
-      });
-
     } catch (error) {
       console.error('Error fetching reservations:', error);
     }
@@ -89,11 +83,10 @@ const ReservationList = ({ selectedDate }) => {
       console.error('Error toggling mark on reservation:', error);
     }
   };
-  
 
   const handleEditClick = (reservation) => {
-    setEditReservationId(reservation.id); // Setzt die ID der zu bearbeitenden Reservierung
-    setEditedData({ ...reservation }); // Befüllt die Felder mit den aktuellen Daten
+    setEditReservationId(reservation.id); 
+    setEditedData({ ...reservation }); 
   };
 
   const handleSaveClick = async () => {
@@ -113,8 +106,8 @@ const ReservationList = ({ selectedDate }) => {
       }
 
       alert('Reservierung erfolgreich aktualisiert!');
-      setEditReservationId(null); // Beendet den Bearbeitungsmodus
-      fetchReservations(selectedDate); // Aktualisiert die Liste
+      setEditReservationId(null);
+      fetchReservations(selectedDate);
     } catch (error) {
       console.error('Error updating reservation:', error);
     }
@@ -169,7 +162,10 @@ const ReservationList = ({ selectedDate }) => {
           >
             <Accordion.Header>
               <h5>
-                {reservation.time.slice(0, 5)} - {reservation.customer_name} - {reservation.guest_count} P - ({reservation.table_number}) - {reservation.Note}
+                <span style={{ display: "inline-block", width: "200px", border: "1px solid black", padding: "5px", margin: "0" }}>{reservation.time.slice(0, 5)} - {reservation.Note}</span>
+                <span style={{ display: "inline-block", width: "200px", border: "1px solid black", padding: "5px", margin: "0" }}>{reservation.customer_name}</span>
+                <span style={{ display: "inline-block", width: "60px", border: "1px solid black", padding: "5px", margin: "0" }}>{reservation.guest_count} P</span>
+                <span style={{ display: "inline-block", width: "50px", border: "1px solid black", padding: "5px", margin: "0" }}>({reservation.table_number})</span>
               </h5>
             </Accordion.Header>
             <Accordion.Body>
@@ -208,6 +204,15 @@ const ReservationList = ({ selectedDate }) => {
                       type="text"
                       name="table_number"
                       value={editedData.table_number}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Telefonnummer</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="phone_number"
+                      value={editedData.phone_number}
                       onChange={handleInputChange}
                     />
                   </Form.Group>
@@ -271,23 +276,18 @@ const ReservationList = ({ selectedDate }) => {
       <hr />
       <h2>Markierte Reservierungen</h2>
       <Card>
-      <ul>
+      <ul style={{ listStyle: 'none', padding: 0 }}>
         {markedReservations.map((reservation) => (
-          <div key={`marked-${reservation.id}`}>
-          <li key={`marked-${reservation.id}`} style={{ textDecoration: 'line-through' }} id={`marked-${reservation.id}`}>
-            <h5>{reservation.time.slice(0, 5)} - {reservation.customer_name} - {reservation.guest_count} P - ({reservation.table_number}) - {reservation.Note}</h5>
+          <li key={`marked-${reservation.id}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px' }} id={`marked-${reservation.id}`}>
+            <span style={{ fontSize: '16px', fontWeight: '500', textDecoration: 'line-through' }}>{reservation.time.slice(0, 5)} - {reservation.customer_name} - {reservation.guest_count} P - ({reservation.table_number}) - {reservation.Note}</span>
             <Button
               variant="secondary"
               size="sm"
               onClick={() => handleToggleMarkClick(reservation)}
-              style={{ marginLeft: '10px' }}
             >
               Demarkieren
             </Button>
-         
           </li>
-          <hr />
-          </div>
         ))}
       </ul>
       </Card>

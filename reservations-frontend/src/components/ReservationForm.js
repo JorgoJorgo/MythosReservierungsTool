@@ -14,12 +14,12 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
 
   const [reservationData, setReservationData] = useState({
     date: formatDate(selectedDate), // Datum im Format 'DD/MM/YYYY'
-    time: '12:00', // Beispielzeit
+    time: '17:00', // Beispielzeit
     customer_name: 'Mustermann', // Beispielname
-    guest_count: '4', // Beispielanzahl Gäste
-    employee_name: 'Jorgo', // Beispielname des Mitarbeiters
+    guest_count: '2', // Beispielanzahl Gäste
+    employee_name: '-', // Beispielname des Mitarbeiters
     table_number: '0', // Beispiel Tischnummer
-    phone_number: '017622157949', // Beispiel Telefonnummer
+    phone_number: '-', // Beispiel Telefonnummer
     Note: ''
   });
 
@@ -35,6 +35,18 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Sicherstellen, dass alle Felder gefüllt sind
+    const filledReservationData = { ...reservationData };
+    Object.keys(filledReservationData).forEach((key) => {
+      if (!filledReservationData[key] || filledReservationData[key] === '') {
+        filledReservationData[key] = '-'; // Beispielstandardwert für leere Felder
+        if (key == 'table_number'){
+          filledReservationData[key] = '0'
+        }
+      }
+    });
+
     try {
       const token = sessionStorage.getItem('token');
       const response = await fetch(`${settings.server_url}api/reservations`, {
@@ -43,11 +55,11 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
           'Content-Type': 'application/json',
           'x-auth-token': token,
         },
-        body: JSON.stringify(reservationData),
+        body: JSON.stringify(filledReservationData),
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("[ReservationForm handleSubmit] reservationData:", reservationData);
+        console.log("[ReservationForm handleSubmit] reservationData:", filledReservationData);
         alert('Reservierung erfolgreich gespeichert!');
         
         // Aufruf der onReservationSaved Funktion nach erfolgreichem Speichern
@@ -59,6 +71,7 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
       console.error('Error:', error);
     }
   };
+
 
   const handleChange = (e) => {
     setReservationData({ ...reservationData, [e.target.name]: e.target.value });
@@ -166,3 +179,4 @@ function ReservationForm({ selectedDate, onReservationSaved }) {
 }
 
 export default ReservationForm;
+

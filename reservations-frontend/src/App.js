@@ -7,6 +7,7 @@ import LoginForm from './components/Login';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
+import DailyNote from './components/DailNote';
 
 function App() {
   const [date, setDate] = useState(new Date());
@@ -47,6 +48,9 @@ function App() {
           </div>
           <div className="reservations-list">
             <ReservationList selectedDate={date} />
+          </div>
+          <div className="daily-note">
+            <DailyNote selectedDate={date} />
           </div>
           <div className="reservation-form">
             {/* ReservationForm erhält eine Callback-Funktion als Prop */}

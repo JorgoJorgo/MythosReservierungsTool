@@ -5,8 +5,8 @@ import {settings} from "../settings"
 import './Login.css'; // CSS-Datei für zentriertes Styling
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
-    username: 'jorgo',
-    password: 'your_password'
+    username: '',
+    password: ''
   });
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -41,36 +41,6 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  // return (
-  //   <div>
-  //     <h2>Login</h2>
-  //     {error && <p style={{ color: 'red' }}>{errorMessage}</p>}
-  //     <form onSubmit={onSubmit}>
-  //       <div>
-  //         <input
-  //           type='text'
-  //           placeholder='Username'
-  //           name='username'
-  //           value={username}
-  //           onChange={onChange}
-  //           required
-  //         />
-  //       </div>
-  //       <div>
-  //         <input
-  //           type='password'
-  //           placeholder='Password'
-  //           name='password'
-  //           value={password}
-  //           onChange={onChange}
-  //           minLength='6'
-  //           required
-  //         />
-  //       </div>
-  //       <input type='submit' value='Login' />
-  //     </form>
-  //   </div>
-  // );
 
   return(
     <div className="login-container">
