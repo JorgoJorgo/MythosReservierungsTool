@@ -165,7 +165,7 @@ const ReservationList = ({ selectedDate }) => {
                 <span style={{ display: "inline-block", width: "200px", border: "1px solid black", padding: "5px", margin: "0" }}>{reservation.time.slice(0, 5)} - {reservation.Note}</span>
                 <span style={{ display: "inline-block", width: "200px", border: "1px solid black", padding: "5px", margin: "0" }}>{reservation.customer_name}</span>
                 <span style={{ display: "inline-block", width: "60px", border: "1px solid black", padding: "5px", margin: "0" }}>{reservation.guest_count} P</span>
-                <span style={{ display: "inline-block", width: "50px", border: "1px solid black", padding: "5px", margin: "0" }}>({reservation.table_number})</span>
+                <span style={{ display: "inline-block", width: "80px", border: "1px solid black", padding: "5px", margin: "0" }}>({reservation.table_number})</span>
               </h5>
             </Accordion.Header>
             <Accordion.Body>

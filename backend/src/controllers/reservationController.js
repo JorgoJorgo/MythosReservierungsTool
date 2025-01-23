@@ -15,7 +15,7 @@ router.post(
     check('customer_name', 'Customer name is required').notEmpty(),
     check('guest_count', 'Guest count is required and should be a number').isInt(),
     check('employee_name', 'Employee name is required').notEmpty(),
-    check('table_number', 'Table number is required and should be a number').isInt(),
+    //check('table_number', 'Table number is required and should be a number').isInt(),
     check('phone_number', 'Phone number is required').notEmpty()
   ],
   async (req, res) => {
@@ -347,7 +347,7 @@ router.put(
     check('customer_name', 'Customer name is required').notEmpty(),
     check('guest_count', 'Guest count is required and should be a number').isInt(),
     check('employee_name', 'Employee name is required').notEmpty(),
-    check('table_number', 'Table number is required and should be a number').isInt(),
+    //check('table_number', 'Table number is required and should be a number').isInt(),
     check('phone_number', 'Phone number is required').notEmpty()
   ],
   async (req, res) => {
